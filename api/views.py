@@ -18,6 +18,13 @@ class UserList(ListCreateAPIView):
     search_fields = ['first_name', 'last_name']
     ordering_fields = '__all__'
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({'msg':"Data posted Successfully"},status=status.HTTP_201_CREATED, headers=headers)
+
 @api_view(['GET','POST','PUT','PATCH','DELETE'])
 def user_api(request, pk=None):
     if request.method == 'GET':
